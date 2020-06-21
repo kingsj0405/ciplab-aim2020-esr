@@ -4,21 +4,20 @@ import time
 from collections import OrderedDict
 import torch
 
-from utils import utils_logger
-from utils import utils_image as util
-from SRResNet import MSRResNet
+from .utils import utils_logger
+from .utils import utils_image as util
+from .SRResNet import MSRResNet
 
 
-def main():
-
+def test(data_dir='../dataset', root_dir='MSRResNet'):
     utils_logger.logger_info('AIM-track', log_path='AIM-track.log')
     logger = logging.getLogger('AIM-track')
 
     # --------------------------------
     # basic settings
     # --------------------------------
-    testsets = 'DIV2K'
-    testset_L = 'DIV2K_valid_LR_bicubic'
+    testsets = f'{data_dir}/DIV2K'
+    testset_L = f'DIV2K_valid_LR_bicubic'
 
     torch.cuda.current_device()
     torch.cuda.empty_cache()
@@ -28,7 +27,7 @@ def main():
     # --------------------------------
     # load model
     # --------------------------------
-    model_path = os.path.join('MSRResNetx4_model', 'MSRResNetx4.pth')
+    model_path = os.path.join(root_dir, 'MSRResNetx4_model', 'MSRResNetx4.pth')
     model = MSRResNet(in_nc=3, out_nc=3, nf=64, nb=16, upscale=4)
     model.load_state_dict(torch.load(model_path), strict=True)
     model.eval()
@@ -95,5 +94,4 @@ def main():
     logger.info('------> Average runtime of ({}) is : {:.6f} seconds'.format(L_folder, ave_runtime))
 
 if __name__ == '__main__':
-
-    main()
+    test("../../dataset", '.')
