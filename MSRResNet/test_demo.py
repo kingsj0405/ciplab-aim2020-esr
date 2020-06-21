@@ -9,7 +9,7 @@ from .utils import utils_image as util
 from .SRResNet import MSRResNet
 
 
-def test(data_dir='../dataset', root_dir='MSRResNet'):
+def test(data_dir='../dataset', root_dir='MSRResNet', save=False):
     utils_logger.logger_info('AIM-track', log_path='AIM-track.log')
     logger = logging.getLogger('AIM-track')
 
@@ -89,7 +89,11 @@ def test(data_dir='../dataset', root_dir='MSRResNet'):
         # --------------------------------
         img_E = util.tensor2uint(img_E)
 
-        # util.imsave(img_E, os.path.join(E_folder, img_name+ext))
+        if save:
+            new_name = '{:3d}'.format(int(img_name.split('x')[0]))
+            path = os.path.join(E_folder, new_name+ext)
+            logger.info('Save {:4d} to {:10s}'.format(idx, path))
+            util.imsave(img_E, path)
     ave_runtime = sum(test_results['runtime']) / len(test_results['runtime']) / 1000.0
     logger.info('------> Average runtime of ({}) is : {:.6f} seconds'.format(L_folder, ave_runtime))
 
