@@ -3,9 +3,6 @@ import fire
 from MSRResNet import test
 
 
-def prune_and_test():
-
-
 def test_prune_test():
     # Initialize variables
     data_dir='../dataset'
@@ -71,6 +68,14 @@ def test_prune_test():
     # test
     test(model_new, L_folder, P_folder, logger, True)
     logger.info(f'PSNR after pruning {calculate_psnr(H_folder, P_folder, logger)}')
+
+
+def inference(image_path):
+    root_dir='MSRResNet'
+    model_path = os.path.join(root_dir, 'MSRResNetx4_model', 'MSRResNetx4.pth')
+    model = load_model(model_path, device)
+    model = load_model(model_path, device)
+
 
 
 def hello():
