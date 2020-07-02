@@ -8,12 +8,12 @@ class Block(nn.Module):
                  group=1):
         super(Block, self).__init__()
 
-        self.b1 = ops.ResidualBlock(64, 64)
-        self.b2 = ops.ResidualBlock(64, 64)
-        self.b3 = ops.ResidualBlock(64, 64)
-        self.c1 = ops.BasicBlock(64*2, 64, 1, 1, 0)
-        self.c2 = ops.BasicBlock(64*3, 64, 1, 1, 0)
-        self.c3 = ops.BasicBlock(64*4, 64, 1, 1, 0)
+        self.b1 = ops.ResidualBlock(in_channels, out_channels)
+        self.b2 = ops.ResidualBlock(in_channels, out_channels)
+        self.b3 = ops.ResidualBlock(in_channels, out_channels)
+        self.c1 = ops.BasicBlock(in_channels*2, out_channels, 1, 1, 0)
+        self.c2 = ops.BasicBlock(in_channels*3, out_channels, 1, 1, 0)
+        self.c3 = ops.BasicBlock(in_channels*4, out_channels, 1, 1, 0)
 
     def forward(self, x):
         c0 = o0 = x
@@ -37,6 +37,7 @@ class Net(nn.Module):
     def __init__(self, **kwargs):
         super(Net, self).__init__()
         
+        channel_cnt = kwargs.get("channel_cnt", 64)
         scale = kwargs.get("scale")
         multi_scale = kwargs.get("multi_scale")
         group = kwargs.get("group", 1)
@@ -44,19 +45,19 @@ class Net(nn.Module):
         self.sub_mean = ops.MeanShift((0.4488, 0.4371, 0.4040), sub=True)
         self.add_mean = ops.MeanShift((0.4488, 0.4371, 0.4040), sub=False)
         
-        self.entry = nn.Conv2d(3, 64, 3, 1, 1)
+        self.entry = nn.Conv2d(3, channel_cnt, 3, 1, 1)
 
-        self.b1 = Block(64, 64)
-        self.b2 = Block(64, 64)
-        self.b3 = Block(64, 64)
-        self.c1 = ops.BasicBlock(64*2, 64, 1, 1, 0)
-        self.c2 = ops.BasicBlock(64*3, 64, 1, 1, 0)
-        self.c3 = ops.BasicBlock(64*4, 64, 1, 1, 0)
+        self.b1 = Block(channel_cnt, channel_cnt)
+        self.b2 = Block(channel_cnt, channel_cnt)
+        self.b3 = Block(channel_cnt, channel_cnt)
+        self.c1 = ops.BasicBlock(channel_cnt*2, channel_cnt, 1, 1, 0)
+        self.c2 = ops.BasicBlock(channel_cnt*3, channel_cnt, 1, 1, 0)
+        self.c3 = ops.BasicBlock(channel_cnt*4, channel_cnt, 1, 1, 0)
         
-        self.upsample = ops.UpsampleBlock(64, scale=scale, 
+        self.upsample = ops.UpsampleBlock(channel_cnt, scale=scale, 
                                           multi_scale=multi_scale,
                                           group=group)
-        self.exit = nn.Conv2d(64, 3, 3, 1, 1)
+        self.exit = nn.Conv2d(channel_cnt, 3, 3, 1, 1)
                 
     def forward(self, x, scale=4):
         x = self.sub_mean(x)
