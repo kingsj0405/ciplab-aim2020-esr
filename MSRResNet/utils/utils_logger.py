@@ -40,9 +40,9 @@ def logger_info(logger_name, log_path='default_logger.log'):
         log.addHandler(fh)
         # print(len(log.handlers))
 
-        sh = logging.StreamHandler()
-        sh.setFormatter(formatter)
-        log.addHandler(sh)
+        #sh = logging.StreamHandler()
+        #sh.setFormatter(formatter)
+        #log.addHandler(sh)
 
 
 '''
